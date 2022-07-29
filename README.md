@@ -1,2 +1,2 @@
-# WinrarBruteForce
-This script creates random strings and use them to brute force any rar file
+# PyWinrarBruteForce
+Brute force .rar file using rarfile module
