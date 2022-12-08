@@ -10,9 +10,9 @@ tries_db.clear()
 
 
 def filePath():
-    return "./home/alan/Desktop/Example Folder/Winrar-BruteForce-Script/test_files/encrypted_file.rar"    # Set here the file path to bruteforce
+    return "path"    # Set here the file path to bruteforce
 def finalPath():
-    return "./home/alan/Desktop/Example Folder/Winrar-BruteForce-Script/test_files"          # Set here path where the file should be extracted
+    return "path"          # Set here path where the file should be extracted
 
 
 def pass_out_of_range(counter, maxRange):
@@ -65,7 +65,7 @@ def unzipFailed():
 
 start = default_timer() # Starts timer
 counter = 0 # Counts how much passwords were used
-passwordLength = 4  # Set the minimal/start length to the password
+passwordLength = 3  # Set the minimal/start length to the password
 
 
 while True:
