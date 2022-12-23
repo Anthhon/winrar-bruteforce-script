@@ -2,23 +2,23 @@ from rarfile import RarFile  # https://pypi.org/project/rarfile/
 from timeit import default_timer    # https://docs.python.org/3/library/timeit.html
 from random import choice   # https://docs.python.org/3/library/random.html?highlight=random#module-random
 from string import ascii_letters, digits # https://docs.python.org/3/library/string.html?highlight=string#module-string
+import secrets
 
 # Blank database to store used passwords
-tries_db = list()
-tries_db.clear()
+used_passwords = list()
+used_passwords.clear()
 
 
-
-def filePath():
+def zip_file_path():
     return "path"    # Set here the file path to bruteforce
-def finalPath():
+
+def extraction_path():
     return "path"          # Set here path where the file should be extracted
 
+def is_max_tries_reached(tries_count, max_tries):
+    return bool(tries_count == max_tries)
 
-def pass_out_of_range(counter, maxRange):
-    return bool(counter == maxRange)
-
-def generate_password(passwordLength):
+def generate_random_password(password_length):
     # The "ascii_letters" refeer to upper and lowercase passwords
     # You can choose into:
     # ascii_letters -> 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
@@ -27,66 +27,64 @@ def generate_password(passwordLength):
     # digits -> '0123456789'
     # hexdigits -> '0123456789abcdefABCDEF'
     # punctuation -> !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
-    # printable -> All ASCII characters considered printable. A combination of, digits, ascii_letters, punctuation and whitespace
-    return (''.join((choice(digits) for x in range(passwordLength))))
+    # printable -> A combination of, digits, ascii_letters, punctuation and whitespace
+    return ''.join(secrets.choice(ascii_letters) for _ in range(password_length))
 
-def check_word_in_Database(word):
-    if word not in tries_db:
-        tries_db.append(word)
+def is_password_used(word):
+    if word not in used_passwords:
+        used_passwords.append(word)
         return False
     else:
         print("___ALREADY USED PASSWORD___")
         return True
 
-def try_password(word):
+def attempt_to_unzip(word):
     try:
-        with RarFile(filePath(), mode='r') as rar_file:
+        with RarFile(zip_file_path(), mode='r') as rar_file:
             rar_file.setpassword(word)
-            rar_file.extractall(path=finalPath())
+            rar_file.extractall(path=extraction_path())
         return True
     except:
         return False
 
-
-
-def unzip_suceeded():
-    stop = default_timer()
-    print(f"THIS OPERATION HAS TAKEN: {round(stop - start)} seconds")
-    print(f"DISCOVERED AFTER {counter} TRIES")
+def unzip_success():
+    stop_time = default_timer()
+    print(f"THIS OPERATION HAS TAKEN: {round(stop_time - start_time)} seconds")
+    print(f"DISCOVERED AFTER {tries_count} TRIES")
     print(f"THE PASSWORD IS: {word}")
     quit()
 
-def unzipFailed():
-    stop = default_timer()
-    print(f"THIS OPERATION HAS TAKEN: {stop - start} seconds")
-    print(f"TRIED {counter} COMBINATIONS")
+def unzip_failure():
+    stop_time = default_timer()
+    print(f"THIS OPERATION HAS TAKEN: {stop_time - start_time} seconds")
+    print(f"TRIED {tries_count} COMBINATIONS")
     quit()
 
 
-start = default_timer() # Starts timer
-counter = 0 # Counts how much passwords were used
-passwordLength = 3  # Set the minimal/start length to the password
+start_time = default_timer() # Starts timer
+tries_count = 0 # Counts how much passwords were used
+password_length = 1  # Set the minimal/start length to the password
 
 
 while True:
 
     # Define the password max tries range
-    maxRange = ((26**passwordLength)*(passwordLength*passwordLength))
+    max_tries = ((26**password_length)*(password_length*password_length))
 
-    if pass_out_of_range(counter, maxRange) is True:
+    if is_max_tries_reached(tries_count, max_tries) is True:
         print("INCREASING PASSWORD RANGE")
-        passwordLength += 1
-        tries_db.clear()    # Clear the database to avoid clustering
+        password_length += 1
+        used_passwords.clear()    # Clear the database to avoid clustering
 
-    word = generate_password(passwordLength)
+    word = generate_random_password(password_length)
     print("Generating Password")
     print(f"Trying: {word}")
 
-    if check_word_in_Database(word) is True:
+    if is_password_used(word) is True:
         continue
     else:
         print(f"Trying: {word}")
-        if try_password(word) is True:
-            unzip_suceeded()
+        if attempt_to_unzip(word) is True:
+            unzip_success()
         else:
-            counter += 1
+            tries_count += 1
