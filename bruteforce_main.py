@@ -5,7 +5,7 @@ from string import ascii_letters, digits # https://docs.python.org/3/library/str
 import secrets
 
 # Blank database to store used passwords
-used_passwords = list()
+used_passwords = set()
 used_passwords.clear()
 
 
@@ -32,7 +32,7 @@ def generate_random_password(password_length):
 
 def is_password_used(word):
     if word not in used_passwords:
-        used_passwords.append(word)
+        used_passwords.add(word)
         return False
     else:
         print("___ALREADY USED PASSWORD___")
@@ -69,7 +69,7 @@ password_length = 1  # Set the minimal/start length to the password
 while True:
 
     # Define the password max tries range
-    max_tries = ((26**password_length)*(password_length*password_length))
+    max_tries = (52**password_length)
 
     if is_max_tries_reached(tries_count, max_tries) is True:
         print("INCREASING PASSWORD RANGE")
